@@ -27,6 +27,9 @@ class User(db.Model, SerializerMixin):
         return f'<User {self.username}>'
 
 class Category(db.Model, SerializerMixin):
+
+    serialize_rules = ('-commodities',)
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     commodities = db.relationship('Commodity', backref='category', lazy=True)
@@ -35,6 +38,8 @@ class Category(db.Model, SerializerMixin):
         return f'<Category {self.name}>'
 
 class Commodity(db.Model, SerializerMixin):
+
+    serialize_rules = ('-reviews',)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text, nullable=True)

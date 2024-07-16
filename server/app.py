@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from models import db
 from config import Config
 from auth import auth_bp, bcrypt, jwt
+from commodities import commodities_bp
 
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ app.config.from_object(Config)
 app.json.compact = False
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(commodities_bp)
 CORS(app,)
 
 

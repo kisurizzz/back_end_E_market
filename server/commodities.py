@@ -10,7 +10,7 @@ commodities_api = Api(commodities_bp)
 class GetCommodities(Resource):
 
     def get(self):
-        commodities =  Commodity.query.all()
-        return jsonify([commodity.to_dict() for commodity in commodities]), 200
+        commodities = [commodity.to_dict() for commodity in Commodity.query.all()]
+        return commodities
 
 commodities_api.add_resource(GetCommodities, '/all')
