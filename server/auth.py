@@ -47,13 +47,14 @@ class Register(Resource):
 
         return {"msg": 'user created successfully'}
 
+
+
 login_args = reqparse.RequestParser()
 login_args.add_argument('email')
 login_args.add_argument('password')
 
-
 class Login(Resource):
-    
+
     def post(self):
         data = login_args.parse_args()
 
@@ -75,6 +76,20 @@ class Login(Resource):
         return {"token": token}
 
 
+class Logout(Resource):
+
+    @jwt_required()
+    def post(self):
+        # Get the JWT token's JTI (unique identifier)
+        jti = get_jwt()['jti']
+
+         # Add the JTI to the blacklist
+        BLACKLIST.add(jti)
+
+        return make_response(jsonify({'Message':'Successfully logged out'}))
+
+
 
 auth_api.add_resource(Register, '/register')
 auth_api.add_resource(Login, '/login')
+auth_api.add_resource(Logout, '/logout')
