@@ -23,6 +23,13 @@ class User(db.Model, SerializerMixin):
     carts = db.relationship('Cart', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+        }
+
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -33,6 +40,12 @@ class Category(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     commodities = db.relationship('Commodity', backref='category', lazy=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
 
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -49,6 +62,17 @@ class Commodity(db.Model, SerializerMixin):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     reviews = db.relationship('Review', backref='commodity', lazy=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'price': self.price,
+            'stock': self.stock,
+            'category_id': self.category_id,
+            'commodity_image':self.commodity_image,
+        }
+
     def __repr__(self):
         return f'<Commodity {self.name} | {self.description} | {self.stock} | {self.price}>'
 
@@ -56,6 +80,14 @@ class Cart(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     items = db.relationship('CartItem', backref='cart', lazy=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'items': [item.to_dict() for item in self.items],
+            'total': self.total,
+        }
 
     @hybrid_property
     def total(self):
@@ -71,6 +103,15 @@ class CartItem(db.Model, SerializerMixin):
     quantity = db.Column(db.Integer, nullable=False, default=1)
     commodity = db.relationship('Commodity', lazy=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'cart_id': self.cart_id,
+            'commodity_id': self.commodity_id,
+            'quantity': self.quantity,
+            'commodity': self.commodity.to_dict(),
+        }
+
     def __repr__(self):
         return f'<CartItem {self.commodity_id}>'
 
@@ -80,6 +121,15 @@ class Review(db.Model, SerializerMixin):
     comment = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     commodity_id = db.Column(db.Integer, db.ForeignKey('commodity.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'rating': self.rating,
+            'comment': self.comment,
+            'user_id': self.user_id,
+            'commodity_id': self.commodity_id,
+        }
 
     def __repr__(self):
         return f'<Review {self.comment} | {self.rating} | {self.commodity_id} | {self.user_id}>'

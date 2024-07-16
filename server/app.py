@@ -5,6 +5,7 @@ from models import db
 from config import Config
 from auth import auth_bp, bcrypt, jwt
 from commodities import commodities_bp
+from cart import cart_bp
 
 
 app = Flask(__name__)
@@ -13,6 +14,7 @@ app.json.compact = False
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(commodities_bp)
+app.register_blueprint(cart_bp)
 CORS(app,)
 
 
